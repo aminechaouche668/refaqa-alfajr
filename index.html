@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>رفقاء الفجر</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,Tahoma,sans-serif;background:#f5f3ec;color:#17352d}
+.wrap{max-width:900px;margin:auto;padding:20px}
+header{background:linear-gradient(135deg,#0d4b3e,#1e7b5b);color:white;border-radius:24px;padding:28px;text-align:center;box-shadow:0 10px 30px #0002}
+.logo{font-size:42px}.title{font-size:30px;font-weight:800;margin:6px}.sub{opacity:.9}
+.card{background:white;border-radius:22px;padding:22px;margin-top:18px;box-shadow:0 5px 20px #0001}
+h2{margin-top:0}.date{text-align:center;color:#667}
+.buttons{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:20px}
+button{border:0;border-radius:16px;padding:18px;font-size:18px;font-weight:bold;cursor:pointer}
+.yes{background:#218a5c;color:white}.no{background:#fff0ef;color:#b33;border:1px solid #f3b2ad}
+.status{text-align:center;padding:14px;border-radius:14px;background:#eef8f2;margin-top:15px}
+.members{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px}
+.member{padding:14px;border:1px solid #e5e2d9;border-radius:15px;display:flex;justify-content:space-between}
+.ok{color:#168052;font-weight:bold}.pending{color:#888}
+footer{text-align:center;padding:25px;color:#777}
+@media(max-width:600px){.buttons{grid-template-columns:1fr}.wrap{padding:12px}.title{font-size:25px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div class="logo">🌙</div>
+  <div class="title">رفقاء الفجر</div>
+  <div class="sub">معًا نحيا سنة الفجر 🤲</div>
+</header>
+
+<section class="card">
+  <div class="date" id="date"></div>
+  <h2 style="text-align:center">🕌 صلاة الفجر</h2>
+  <p style="text-align:center;font-size:20px">هل صليت الفجر اليوم؟</p>
+  <div class="buttons">
+    <button class="yes" onclick="saveAnswer('yes')">صليت الحمد لله ✅</button>
+    <button class="no" onclick="saveAnswer('no')">لم أصلِّ</button>
+  </div>
+  <div id="status" class="status">لم تسجل إجابتك بعد.</div>
+</section>
+
+<section class="card">
+  <h2>👨‍👩‍👦 أفراد العائلة</h2>
+  <div class="members">
+    <div class="member"><span>أمين</span><span class="ok">✓ صلّى</span></div>
+    <div class="member"><span>عبد النور</span><span class="ok">✓ صلّى</span></div>
+    <div class="member"><span>إسحاق</span><span class="pending">لم يسجل</span></div>
+    <div class="member"><span>إدريس</span><span class="pending">لم يسجل</span></div>
+  </div>
+  <p style="color:#777;font-size:14px;margin-bottom:0">هذه نسخة تجريبية. لاحقًا نربط كل عضو بحساب خاص وقاعدة بيانات.</p>
+</section>
+
+<section class="card">
+  <h2>💚 رسالة اليوم</h2>
+  <p style="font-size:18px;line-height:1.8">بارك الله فيكم. الفكرة هي التشجيع والتذكير، وليس الحكم على أحد. ربي يثبتنا جميعًا على الصلاة.</p>
+</section>
+
+<footer>رفقاء الفجر © 2026</footer>
+</div>
+
+<script>
+const key='fajr-'+new Date().toISOString().slice(0,10);
+document.getElementById('date').textContent =
+  new Intl.DateTimeFormat('ar-DZ',{weekday:'long',year:'numeric',month:'long',day:'numeric'}).format(new Date());
+
+function show(){
+  const v=localStorage.getItem(key);
+  const s=document.getElementById('status');
+  if(v==='yes') s.textContent='✅ تم تسجيل: صليت الحمد لله. بارك الله فيك!';
+  else if(v==='no') s.textContent='تم تسجيل إجابتك. نسأل الله أن يعيننا جميعًا.';
+}
+function saveAnswer(v){localStorage.setItem(key,v);show();}
+show();
+</script>
+</body>
+</html>
