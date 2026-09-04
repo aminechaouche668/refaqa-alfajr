@@ -164,25 +164,62 @@ button{
   margin-top:12px;
 }
 
+.statsGrid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:12px;
+}
+
 .stat{
   padding:18px;
   border:1px solid #e5e2d9;
   border-radius:16px;
-  margin:10px 0;
   text-align:center;
+  background:white;
 }
 
 .statNumber{
   font-size:30px;
   font-weight:bold;
   color:#218a5c;
+  margin-top:5px;
 }
 
 .familyAdmin{
-  padding:16px;
+  padding:18px;
   border:1px solid #e5e2d9;
-  border-radius:16px;
-  margin:10px 0;
+  border-radius:18px;
+  margin:12px 0;
+  background:#fff;
+}
+
+.familyTitle{
+  font-size:19px;
+  font-weight:bold;
+  margin-bottom:10px;
+}
+
+.childAdmin{
+  padding:10px 12px;
+  margin:7px 0;
+  background:#f5f8f6;
+  border-radius:12px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.adminLoading{
+  text-align:center;
+  padding:20px;
+  color:#777;
+}
+
+.adminError{
+  padding:15px;
+  border-radius:14px;
+  background:#fff0ef;
+  color:#a33;
 }
 
 footer{
@@ -192,6 +229,11 @@ footer{
 }
 
 @media(max-width:600px){
+
+  .statsGrid{
+    grid-template-columns:1fr;
+  }
+
   .buttons{
     grid-template-columns:1fr;
   }
@@ -202,6 +244,12 @@ footer{
 
   .title{
     font-size:25px;
+  }
+
+  .childAdmin{
+    flex-direction:column;
+    align-items:flex-start;
+    gap:5px;
   }
 }
 </style>
@@ -275,7 +323,6 @@ footer{
 
   <div id="members"></div>
 
-  <!-- يظهر للـAdmin فقط -->
   <button
     id="adminButton"
     class="adminBtn hidden"
@@ -354,28 +401,34 @@ footer{
 
   <div class="adminBox">
 
-    <div class="stat">
-      <div class="small">عدد العائلات</div>
-      <div id="adminFamilies" class="statNumber">0</div>
-    </div>
+    <div class="statsGrid">
 
-    <div class="stat">
-      <div class="small">عدد الأبناء</div>
-      <div id="adminChildren" class="statNumber">0</div>
-    </div>
+      <div class="stat">
+        <div class="small">عدد العائلات</div>
+        <div id="adminFamilies" class="statNumber">0</div>
+      </div>
 
-    <div class="stat">
-      <div class="small">سجلات الصلاة</div>
-      <div id="adminPrayers" class="statNumber">0</div>
+      <div class="stat">
+        <div class="small">عدد الأبناء</div>
+        <div id="adminChildren" class="statNumber">0</div>
+      </div>
+
+      <div class="stat">
+        <div class="small">سجلات الصلاة</div>
+        <div id="adminPrayers" class="statNumber">0</div>
+      </div>
+
     </div>
 
   </div>
+
 
   <h3>👨‍👩‍👧‍👦 العائلات المسجلة</h3>
 
   <div id="adminFamiliesList">
     جاري التحميل...
   </div>
+
 
   <button
     class="backBtn"
@@ -1141,54 +1194,304 @@ async function showAdmin(){
 
 
 /* =====================================
-   إحصائيات الإدارة
+   تحميل لوحة الإدارة
 ===================================== */
 
 async function loadAdminStats(){
 
+  if(!isAdmin){
+
+    return;
+  }
+
+
+  const list =
+    document.getElementById(
+      "adminFamiliesList"
+    );
+
+
+  list.innerHTML =
+    '<div class="adminLoading">⏳ جاري تحميل بيانات الإدارة...</div>';
+
+
   /*
-    ملاحظة:
-    بسبب RLS الحالي، حساب Admin يستطيع
-    رؤية سجل admin_users الخاص به فقط،
-    لكنه لا يستطيع بعد رؤية كل العائلات.
-    
-    لذلك سنعرض في هذه المرحلة معلومات
-    الحساب الحالي، وبعدها نضيف صلاحيات
-    الإدارة الشاملة بطريقة آمنة.
+    جلب العائلات
   */
 
+  const familiesResult =
+    await supabaseClient
+    .from("families")
+    .select("id,family_name,created_at")
+    .order("created_at",{ascending:true});
+
+
+  if(familiesResult.error){
+
+    console.log(
+      "Families admin error:",
+      familiesResult.error
+    );
+
+    list.innerHTML = `
+      <div class="adminError">
+        ❌ تعذر تحميل العائلات.
+        <br>
+        <span class="small">
+          ${escapeHtml(familiesResult.error.message)}
+        </span>
+      </div>
+    `;
+
+    return;
+  }
+
+
+  const families =
+    familiesResult.data || [];
+
+
+  /*
+    جلب جميع الأبناء
+  */
+
+  const childrenResult =
+    await supabaseClient
+    .from("children")
+    .select("id,family_id,name,created_at")
+    .order("created_at",{ascending:true});
+
+
+  if(childrenResult.error){
+
+    console.log(
+      "Children admin error:",
+      childrenResult.error
+    );
+
+    list.innerHTML = `
+      <div class="adminError">
+        ❌ تعذر تحميل الأبناء.
+        <br>
+        <span class="small">
+          ${escapeHtml(childrenResult.error.message)}
+        </span>
+      </div>
+    `;
+
+    return;
+  }
+
+
+  const children =
+    childrenResult.data || [];
+
+
+  /*
+    جلب سجلات الصلاة
+  */
+
+  const prayersResult =
+    await supabaseClient
+    .from("prayers")
+    .select("id,child_id,prayer_date,fajr");
+
+
+  if(prayersResult.error){
+
+    console.log(
+      "Prayers admin error:",
+      prayersResult.error
+    );
+
+    list.innerHTML = `
+      <div class="adminError">
+        ❌ تعذر تحميل سجلات الصلاة.
+        <br>
+        <span class="small">
+          ${escapeHtml(prayersResult.error.message)}
+        </span>
+      </div>
+    `;
+
+    return;
+  }
+
+
+  const prayers =
+    prayersResult.data || [];
+
+
+  /*
+    الإحصائيات
+  */
 
   document
     .getElementById("adminFamilies")
     .textContent =
-    "—";
+    families.length;
 
 
   document
     .getElementById("adminChildren")
     .textContent =
-    "—";
+    children.length;
 
 
   document
     .getElementById("adminPrayers")
     .textContent =
-    "—";
+    prayers.length;
 
 
-  document
-    .getElementById("adminFamiliesList")
-    .innerHTML = `
-      <div class="familyAdmin">
-        👑 حساب المدير مفعل بنجاح.
-        <br><br>
-        <span class="small">
-          صلاحية الإدارة تعمل، لكن الوصول إلى
-          بيانات جميع العائلات سنضيفه في الخطوة التالية
-          باستخدام صلاحيات قاعدة البيانات.
-        </span>
+  /*
+    لا توجد عائلات
+  */
+
+  if(families.length === 0){
+
+    list.innerHTML =
+      '<div class="familyAdmin">لا توجد عائلات مسجلة حاليًا.</div>';
+
+    return;
+  }
+
+
+  /*
+    إنشاء قائمة العائلات
+  */
+
+  list.innerHTML = "";
+
+
+  for(const family of families){
+
+    const familyChildren =
+      children.filter(
+        child =>
+          child.family_id === family.id
+      );
+
+
+    const familyChildIds =
+      new Set(
+        familyChildren.map(
+          child => child.id
+        )
+      );
+
+
+    const familyPrayers =
+      prayers.filter(
+        prayer =>
+          familyChildIds.has(
+            prayer.child_id
+          )
+      );
+
+
+    const div =
+      document.createElement("div");
+
+
+    div.className =
+      "familyAdmin";
+
+
+    const familyDate =
+      family.created_at
+      ? new Intl.DateTimeFormat(
+          "ar-DZ",
+          {
+            year:"numeric",
+            month:"long",
+            day:"numeric"
+          }
+        ).format(
+          new Date(family.created_at)
+        )
+      : "غير معروف";
+
+
+    let childrenHtml = "";
+
+
+    if(familyChildren.length === 0){
+
+      childrenHtml =
+        `
+        <div class="small">
+          لم تتم إضافة أبناء بعد.
+        </div>
+        `;
+
+    }else{
+
+      for(const child of familyChildren){
+
+        const childPrayers =
+          familyPrayers.filter(
+            prayer =>
+              prayer.child_id === child.id
+          );
+
+
+        const prayedCount =
+          childPrayers.filter(
+            prayer =>
+              prayer.fajr === true
+          ).length;
+
+
+        childrenHtml += `
+          <div class="childAdmin">
+
+            <span>
+              👦 ${escapeHtml(child.name)}
+            </span>
+
+            <span class="small">
+              🕌 سجلات: ${childPrayers.length}
+              |
+              ✅ صلّى: ${prayedCount}
+            </span>
+
+          </div>
+        `;
+
+      }
+
+    }
+
+
+    div.innerHTML = `
+
+      <div class="familyTitle">
+        👨‍👩‍👧‍👦 ${escapeHtml(
+          family.family_name || "عائلتي"
+        )}
       </div>
+
+      <div class="small">
+        📅 تاريخ التسجيل: ${escapeHtml(familyDate)}
+      </div>
+
+      <div class="small" style="margin-top:5px">
+        👦 عدد الأبناء: ${familyChildren.length}
+        |
+        🕌 سجلات الصلاة: ${familyPrayers.length}
+      </div>
+
+      <div style="margin-top:12px">
+        ${childrenHtml}
+      </div>
+
     `;
+
+
+    list.appendChild(div);
+
+  }
 
 }
 
@@ -1367,7 +1670,9 @@ supabaseClient.auth
   );
 
 
-/* تشغيل الموقع */
+/* =====================================
+   تشغيل الموقع
+===================================== */
 
 checkSession();
 
