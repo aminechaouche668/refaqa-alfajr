@@ -381,13 +381,20 @@ footer{
   </div>
 
   <button
-    class="secondary"
-    onclick="backToFamily()"
-  >
-    ⬅️ الرجوع للعائلة
-  </button>
+  class="secondary"
+  onclick="showPrayerHistory()"
+>
+  📅 سجل الفجر
+</button>
 
-</section>
+<button
+  class="secondary"
+  onclick="backToFamily()"
+>
+  ⬅️ الرجوع للعائلة
+</button>
+
+<div id="prayerHistory" class="hidden"></div>
 
 
 <!-- لوحة الإدارة -->
