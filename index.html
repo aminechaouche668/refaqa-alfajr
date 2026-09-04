@@ -1,1088 +1,1375 @@
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>رفقاء الفجر</title>
 
-  <title>رفقاء الفجر</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*{box-sizing:border-box}
 
-  <style>
-    *{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:Arial,Tahoma,sans-serif;
+  background:#f5f3ec;
+  color:#17352d;
+}
 
-    body{
-      margin:0;
-      font-family:Arial,Tahoma,sans-serif;
-      background:#f5f3ec;
-      color:#17352d;
-    }
+.wrap{
+  max-width:900px;
+  margin:auto;
+  padding:20px;
+}
 
-    .wrap{
-      max-width:900px;
-      margin:auto;
-      padding:20px;
-    }
+header{
+  background:linear-gradient(135deg,#0d4b3e,#1e7b5b);
+  color:white;
+  border-radius:24px;
+  padding:28px;
+  text-align:center;
+  box-shadow:0 10px 30px #0002;
+}
 
-    header{
-      background:linear-gradient(135deg,#0d4b3e,#1e7b5b);
-      color:white;
-      border-radius:24px;
-      padding:28px;
-      text-align:center;
-      box-shadow:0 10px 30px #0002;
-    }
+.logo{font-size:42px}
+.title{font-size:30px;font-weight:800;margin:6px}
+.sub{opacity:.9}
 
-    .logo{font-size:42px}
-    .title{font-size:30px;font-weight:800;margin:6px}
-    .sub{opacity:.9}
+.card{
+  background:white;
+  border-radius:22px;
+  padding:22px;
+  margin-top:18px;
+  box-shadow:0 5px 20px #0001;
+}
 
-    .card{
-      background:white;
-      border-radius:22px;
-      padding:22px;
-      margin-top:18px;
-      box-shadow:0 5px 20px #0001;
-    }
+h2{margin-top:0}
 
-    h2{margin-top:0}
+input{
+  width:100%;
+  padding:15px;
+  margin:7px 0;
+  border:1px solid #ddd;
+  border-radius:14px;
+  font-size:16px;
+}
 
-    input{
-      width:100%;
-      padding:15px;
-      margin:7px 0;
-      border:1px solid #ddd;
-      border-radius:14px;
-      font-size:16px;
-    }
+button{
+  border:0;
+  border-radius:16px;
+  padding:15px;
+  font-size:17px;
+  font-weight:bold;
+  cursor:pointer;
+}
 
-    button{
-      border:0;
-      border-radius:16px;
-      padding:15px;
-      font-size:17px;
-      font-weight:bold;
-      cursor:pointer;
-    }
+.primary{
+  background:#218a5c;
+  color:white;
+  width:100%;
+  margin-top:8px;
+}
 
-    .primary{
-      background:#218a5c;
-      color:white;
-      width:100%;
-      margin-top:8px;
-    }
+.secondary{
+  background:#eef8f2;
+  color:#176044;
+  width:100%;
+  margin-top:8px;
+}
 
-    .secondary{
-      background:#eef8f2;
-      color:#176044;
-      width:100%;
-      margin-top:8px;
-    }
+.danger{
+  background:#fff0ef;
+  color:#b33;
+  width:100%;
+  margin-top:8px;
+}
 
-    .danger{
-      background:#fff0ef;
-      color:#b33;
-      width:100%;
-      margin-top:8px;
-    }
+.adminBtn{
+  background:#17352d;
+  color:white;
+  width:100%;
+  margin-top:8px;
+}
 
-    .buttons{
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:14px;
-      margin-top:20px;
-    }
+.backBtn{
+  background:#eef8f2;
+  color:#176044;
+  width:100%;
+  margin-top:12px;
+}
 
-    .yes{
-      background:#218a5c;
-      color:white;
-    }
+.buttons{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:14px;
+  margin-top:20px;
+}
 
-    .no{
-      background:#fff0ef;
-      color:#b33;
-      border:1px solid #f3b2ad;
-    }
+.yes{
+  background:#218a5c;
+  color:white;
+}
 
-    .status{
-      text-align:center;
-      padding:14px;
-      border-radius:14px;
-      background:#eef8f2;
-      margin-top:15px;
-    }
+.no{
+  background:#fff0ef;
+  color:#b33;
+  border:1px solid #f3b2ad;
+}
 
-    .member{
-      padding:14px;
-      border:1px solid #e5e2d9;
-      border-radius:15px;
-      margin:8px 0;
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-    }
+.status{
+  text-align:center;
+  padding:14px;
+  border-radius:14px;
+  background:#eef8f2;
+  margin-top:15px;
+}
 
-    .ok{
-      color:#168052;
-      font-weight:bold;
-    }
+.member{
+  padding:14px;
+  border:1px solid #e5e2d9;
+  border-radius:15px;
+  margin:8px 0;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
 
-    .pending{
-      color:#888;
-    }
+.ok{
+  color:#168052;
+  font-weight:bold;
+}
 
-    .hidden{
-      display:none;
-    }
+.pending{
+  color:#888;
+}
 
-    .small{
-      font-size:14px;
-      color:#777;
-    }
+.hidden{
+  display:none;
+}
 
-    .center{
-      text-align:center;
-    }
+.small{
+  font-size:14px;
+  color:#777;
+}
 
-    footer{
-      text-align:center;
-      padding:25px;
-      color:#777;
-    }
+.center{
+  text-align:center;
+}
 
-    @media(max-width:600px){
-      .buttons{
-        grid-template-columns:1fr;
-      }
+.adminBox{
+  padding:18px;
+  border-radius:18px;
+  background:#f5f8f6;
+  margin-top:12px;
+}
 
-      .wrap{
-        padding:12px;
-      }
+.stat{
+  padding:18px;
+  border:1px solid #e5e2d9;
+  border-radius:16px;
+  margin:10px 0;
+  text-align:center;
+}
 
-      .title{
-        font-size:25px;
-      }
-    }
-  </style>
+.statNumber{
+  font-size:30px;
+  font-weight:bold;
+  color:#218a5c;
+}
+
+.familyAdmin{
+  padding:16px;
+  border:1px solid #e5e2d9;
+  border-radius:16px;
+  margin:10px 0;
+}
+
+footer{
+  text-align:center;
+  padding:25px;
+  color:#777;
+}
+
+@media(max-width:600px){
+  .buttons{
+    grid-template-columns:1fr;
+  }
+
+  .wrap{
+    padding:12px;
+  }
+
+  .title{
+    font-size:25px;
+  }
+}
+</style>
 </head>
 
 <body>
 
 <div class="wrap">
 
-  <header>
-    <div class="logo">🌙</div>
-    <div class="title">رفقاء الفجر</div>
-    <div class="sub">معًا نحيا سنة الفجر 🤲</div>
-  </header>
+<header>
+  <div class="logo">🌙</div>
+  <div class="title">رفقاء الفجر</div>
+  <div class="sub">معًا نحيا سنة الفجر 🤲</div>
+</header>
 
 
-  <!-- تسجيل الدخول -->
-  <section class="card" id="authCard">
+<!-- تسجيل الدخول -->
+<section class="card" id="authCard">
 
-    <h2>👨‍👩‍👧‍👦 حساب العائلة</h2>
+  <h2>👨‍👩‍👧‍👦 حساب العائلة</h2>
 
-    <p>
-      أنشئ حسابًا للعائلة باستعمال إيميل واحد،
-      ثم أضف أبناء العائلة كل واحد بشكل مستقل.
-    </p>
+  <p>
+    أنشئ حسابًا للعائلة باستعمال إيميل واحد،
+    ثم أضف أبناء العائلة كل واحد بشكل مستقل.
+  </p>
 
-    <input
-      id="email"
-      type="email"
-      placeholder="البريد الإلكتروني"
-    >
+  <input
+    id="email"
+    type="email"
+    placeholder="البريد الإلكتروني"
+  >
 
-    <input
-      id="password"
-      type="password"
-      placeholder="كلمة السر"
-    >
+  <input
+    id="password"
+    type="password"
+    placeholder="كلمة السر"
+  >
 
-    <button class="primary" onclick="signUp()">
-      إنشاء حساب جديد
-    </button>
+  <button class="primary" onclick="signUp()">
+    إنشاء حساب جديد
+  </button>
 
-    <button class="secondary" onclick="signIn()">
-      تسجيل الدخول
-    </button>
+  <button class="secondary" onclick="signIn()">
+    تسجيل الدخول
+  </button>
 
-    <div id="authStatus" class="status">
-      لم يتم تسجيل الدخول.
-    </div>
+  <div id="authStatus" class="status">
+    لم يتم تسجيل الدخول.
+  </div>
 
-  </section>
-
-
-  <!-- لوحة العائلة -->
-  <section class="card hidden" id="familyCard">
-
-    <h2>🏠 عائلتي</h2>
-
-    <p id="familyWelcome"></p>
-
-    <h3>➕ إضافة فرد للعائلة</h3>
-
-    <input
-      id="childName"
-      placeholder="اسم الابن"
-    >
-
-    <button class="primary" onclick="addChild()">
-      إضافة الابن
-    </button>
-
-    <div id="members"></div>
-
-    <button class="danger" onclick="signOut()">
-      تسجيل الخروج
-    </button>
-
-  </section>
+</section>
 
 
-  <!-- الصلاة -->
-  <section class="card hidden" id="prayerCard">
+<!-- لوحة العائلة -->
+<section class="card hidden" id="familyCard">
 
-    <div class="center">
+  <h2>🏠 عائلتي</h2>
 
-      <h2>🕌 صلاة الفجر</h2>
+  <p id="familyWelcome"></p>
 
-      <p id="selectedChild"></p>
+  <h3>➕ إضافة فرد للعائلة</h3>
 
-      <p id="date"></p>
+  <input
+    id="childName"
+    placeholder="اسم الابن"
+  >
 
-    </div>
+  <button class="primary" onclick="addChild()">
+    إضافة الابن
+  </button>
 
-    <p
-      class="center"
-      style="font-size:20px"
-    >
-      هل صليت الفجر اليوم؟
-    </p>
+  <div id="members"></div>
 
-    <div class="buttons">
+  <!-- يظهر للـAdmin فقط -->
+  <button
+    id="adminButton"
+    class="adminBtn hidden"
+    onclick="showAdmin()"
+  >
+    👑 لوحة الإدارة
+  </button>
 
-      <button
-        class="yes"
-        onclick="savePrayer(true)"
-      >
-        صليت الحمد لله ✅
-      </button>
+  <button class="danger" onclick="signOut()">
+    تسجيل الخروج
+  </button>
 
-      <button
-        class="no"
-        onclick="savePrayer(false)"
-      >
-        لم أصلِّ
-      </button>
+</section>
 
-    </div>
 
-    <div id="prayerStatus" class="status">
-      لم تسجل إجابتك بعد.
-    </div>
+<!-- الصلاة -->
+<section class="card hidden" id="prayerCard">
+
+  <div class="center">
+
+    <h2>🕌 صلاة الفجر</h2>
+
+    <p id="selectedChild"></p>
+
+    <p id="date"></p>
+
+  </div>
+
+  <p
+    class="center"
+    style="font-size:20px"
+  >
+    هل صليت الفجر اليوم؟
+  </p>
+
+  <div class="buttons">
 
     <button
-      class="secondary"
-      onclick="backToFamily()"
+      class="yes"
+      onclick="savePrayer(true)"
     >
-      ⬅️ الرجوع للعائلة
+      صليت الحمد لله ✅
     </button>
 
-  </section>
+    <button
+      class="no"
+      onclick="savePrayer(false)"
+    >
+      لم أصلِّ
+    </button>
+
+  </div>
+
+  <div id="prayerStatus" class="status">
+    لم تسجل إجابتك بعد.
+  </div>
+
+  <button
+    class="secondary"
+    onclick="backToFamily()"
+  >
+    ⬅️ الرجوع للعائلة
+  </button>
+
+</section>
 
 
-  <!-- رسالة اليوم -->
-  <section class="card">
+<!-- لوحة الإدارة -->
+<section class="card hidden" id="adminCard">
 
-    <h2>💚 رسالة اليوم</h2>
+  <h2>👑 لوحة الإدارة</h2>
 
-    <p style="font-size:18px;line-height:1.8">
-      بارك الله فيكم. الفكرة هي التشجيع والتذكير،
-      وليس الحكم على أحد. ربي يثبتنا جميعًا على الصلاة.
-    </p>
+  <p>
+    مرحبًا بك في لوحة إدارة رفقاء الفجر.
+  </p>
 
-  </section>
+  <div class="adminBox">
+
+    <div class="stat">
+      <div class="small">عدد العائلات</div>
+      <div id="adminFamilies" class="statNumber">0</div>
+    </div>
+
+    <div class="stat">
+      <div class="small">عدد الأبناء</div>
+      <div id="adminChildren" class="statNumber">0</div>
+    </div>
+
+    <div class="stat">
+      <div class="small">سجلات الصلاة</div>
+      <div id="adminPrayers" class="statNumber">0</div>
+    </div>
+
+  </div>
+
+  <h3>👨‍👩‍👧‍👦 العائلات المسجلة</h3>
+
+  <div id="adminFamiliesList">
+    جاري التحميل...
+  </div>
+
+  <button
+    class="backBtn"
+    onclick="backFromAdmin()"
+  >
+    ⬅️ الرجوع إلى عائلتي
+  </button>
+
+</section>
 
 
-  <footer>
-    رفقاء الفجر © 2026
-  </footer>
+<!-- رسالة اليوم -->
+<section class="card">
+
+  <h2>💚 رسالة اليوم</h2>
+
+  <p style="font-size:18px;line-height:1.8">
+    بارك الله فيكم. الفكرة هي التشجيع والتذكير،
+    وليس الحكم على أحد. ربي يثبتنا جميعًا على الصلاة.
+  </p>
+
+</section>
+
+
+<footer>
+  رفقاء الفجر © 2026
+</footer>
 
 </div>
 
 
 <script>
 
-  /* =====================================
-     إعداد Supabase
-  ===================================== */
+/* =====================================
+   إعداد Supabase
+===================================== */
 
-  const SUPABASE_URL =
-    "https://qrzucdjlbxltfggnixxx.supabase.co";
+const SUPABASE_URL =
+  "https://qrzucdjlbxltfggnixxx.supabase.co";
 
-  const SUPABASE_KEY =
-    "sb_publishable_6XjDuCkc99tvwYvxXd0c4g_PYQy43wb";
+const SUPABASE_KEY =
+  "sb_publishable_6XjDuCkc99tvwYvxXd0c4g_PYQy43wb";
 
-  const supabaseClient =
-    supabase.createClient(
-      SUPABASE_URL,
-      SUPABASE_KEY
+const supabaseClient =
+  supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  );
+
+
+let currentUser = null;
+let selectedChildId = null;
+let isAdmin = false;
+
+
+/* =====================================
+   التاريخ
+===================================== */
+
+function getToday(){
+
+  const now = new Date();
+
+  const year =
+    now.getFullYear();
+
+  const month =
+    String(now.getMonth()+1).padStart(2,"0");
+
+  const day =
+    String(now.getDate()).padStart(2,"0");
+
+  return `${year}-${month}-${day}`;
+}
+
+const today = getToday();
+
+
+document.getElementById("date").textContent =
+  new Intl.DateTimeFormat(
+    "ar-DZ",
+    {
+      weekday:"long",
+      year:"numeric",
+      month:"long",
+      day:"numeric"
+    }
+  ).format(new Date());
+
+
+/* =====================================
+   إنشاء الحساب
+===================================== */
+
+async function signUp(){
+
+  const email =
+    document
+    .getElementById("email")
+    .value
+    .trim();
+
+  const password =
+    document
+    .getElementById("password")
+    .value;
+
+
+  if(!email || !password){
+
+    showAuth(
+      "⚠️ أدخل الإيميل وكلمة السر."
     );
 
-
-  let currentUser = null;
-  let selectedChildId = null;
-
-
-  /* =====================================
-     التاريخ
-  ===================================== */
-
-  function getToday(){
-
-    const now = new Date();
-
-    const year =
-      now.getFullYear();
-
-    const month =
-      String(now.getMonth()+1).padStart(2,"0");
-
-    const day =
-      String(now.getDate()).padStart(2,"0");
-
-    return `${year}-${month}-${day}`;
+    return;
   }
 
 
-  const today = getToday();
-
-
-  document.getElementById("date").textContent =
-    new Intl.DateTimeFormat(
-      "ar-DZ",
-      {
-        weekday:"long",
-        year:"numeric",
-        month:"long",
-        day:"numeric"
-      }
-    ).format(new Date());
-
-
-  /* =====================================
-     إنشاء حساب
-  ===================================== */
-
-  async function signUp(){
-
-    const email =
-      document.getElementById("email")
-      .value.trim();
-
-    const password =
-      document.getElementById("password")
-      .value;
-
-
-    if(!email || !password){
-
-      showAuth(
-        "⚠️ أدخل الإيميل وكلمة السر."
-      );
-
-      return;
-    }
-
-
-    if(password.length < 6){
-
-      showAuth(
-        "⚠️ كلمة السر يجب أن تكون 6 أحرف على الأقل."
-      );
-
-      return;
-    }
-
+  if(password.length < 6){
 
     showAuth(
-      "⏳ جاري إنشاء الحساب..."
+      "⚠️ كلمة السر يجب أن تكون 6 أحرف على الأقل."
     );
 
-
-    const {data,error} =
-      await supabaseClient.auth.signUp({
-        email:email,
-        password:password
-      });
-
-
-    if(error){
-
-      showAuth(
-        "❌ " + error.message
-      );
-
-      return;
-    }
-
-
-    /*
-      إذا كان Supabase لا يطلب تأكيد البريد
-      ستكون هناك جلسة مباشرة.
-    */
-
-    if(data.session){
-
-      currentUser =
-        data.session.user;
-
-      await ensureFamily();
-
-      showFamily();
-
-      showAuth(
-        "✅ تم إنشاء الحساب بنجاح."
-      );
-
-      return;
-    }
-
-
-    /*
-      إذا كان تأكيد البريد مفعلًا
-    */
-
-    showAuth(
-      "✅ تم إنشاء الحساب. افتح بريدك الإلكتروني وأكد الحساب، ثم سجّل الدخول."
-    );
+    return;
   }
 
 
-  /* =====================================
-     تسجيل الدخول
-  ===================================== */
-
-  async function signIn(){
-
-    const email =
-      document.getElementById("email")
-      .value.trim();
-
-    const password =
-      document.getElementById("password")
-      .value;
+  showAuth(
+    "⏳ جاري إنشاء الحساب..."
+  );
 
 
-    if(!email || !password){
+  const {data,error} =
+    await supabaseClient.auth.signUp({
+      email:email,
+      password:password
+    });
 
-      showAuth(
-        "⚠️ أدخل الإيميل وكلمة السر."
-      );
 
-      return;
-    }
-
+  if(error){
 
     showAuth(
-      "⏳ جاري تسجيل الدخول..."
+      "❌ " + error.message
     );
 
-
-    const {data,error} =
-      await supabaseClient.auth
-      .signInWithPassword({
-        email:email,
-        password:password
-      });
+    return;
+  }
 
 
-    if(error){
-
-      showAuth(
-        "❌ " + error.message
-      );
-
-      return;
-    }
-
+  if(data.session){
 
     currentUser =
-      data.user;
+      data.session.user;
+
+    await ensureFamily();
+
+    await checkAdmin();
+
+    showFamily();
+
+    showAuth(
+      "✅ تم إنشاء الحساب بنجاح."
+    );
+
+    return;
+  }
+
+
+  showAuth(
+    "✅ تم إنشاء الحساب. افتح بريدك الإلكتروني وأكد الحساب، ثم سجّل الدخول."
+  );
+}
+
+
+/* =====================================
+   تسجيل الدخول
+===================================== */
+
+async function signIn(){
+
+  const email =
+    document
+    .getElementById("email")
+    .value
+    .trim();
+
+  const password =
+    document
+    .getElementById("password")
+    .value;
+
+
+  if(!email || !password){
+
+    showAuth(
+      "⚠️ أدخل الإيميل وكلمة السر."
+    );
+
+    return;
+  }
+
+
+  showAuth(
+    "⏳ جاري تسجيل الدخول..."
+  );
+
+
+  const {data,error} =
+    await supabaseClient.auth
+    .signInWithPassword({
+      email:email,
+      password:password
+    });
+
+
+  if(error){
+
+    showAuth(
+      "❌ " + error.message
+    );
+
+    return;
+  }
+
+
+  currentUser =
+    data.user;
+
+
+  await ensureFamily();
+
+  await checkAdmin();
+
+  showFamily();
+}
+
+
+/* =====================================
+   التأكد من وجود العائلة
+===================================== */
+
+async function ensureFamily(){
+
+  if(!currentUser){
+    return;
+  }
+
+
+  const {data,error} =
+    await supabaseClient
+    .from("families")
+    .select("id")
+    .eq("id",currentUser.id)
+    .maybeSingle();
+
+
+  if(error){
+
+    console.log(
+      "Family check error:",
+      error
+    );
+
+    return;
+  }
+
+
+  if(!data){
+
+    const {error:insertError} =
+      await supabaseClient
+      .from("families")
+      .insert({
+        id:currentUser.id,
+        family_name:"عائلتي"
+      });
+
+
+    if(insertError){
+
+      console.log(
+        "Family creation error:",
+        insertError
+      );
+
+    }
+
+  }
+}
+
+
+/* =====================================
+   فحص صلاحية Admin
+===================================== */
+
+async function checkAdmin(){
+
+  isAdmin = false;
+
+
+  if(!currentUser){
+    return;
+  }
+
+
+  const {data,error} =
+    await supabaseClient
+    .from("admin_users")
+    .select("user_id")
+    .eq("user_id",currentUser.id)
+    .maybeSingle();
+
+
+  if(error){
+
+    console.log(
+      "Admin check:",
+      error
+    );
+
+    return;
+  }
+
+
+  if(data){
+
+    isAdmin = true;
+
+  }
+
+}
+
+
+/* =====================================
+   إظهار العائلة
+===================================== */
+
+async function showFamily(){
+
+  document
+    .getElementById("authCard")
+    .classList.add("hidden");
+
+
+  document
+    .getElementById("familyCard")
+    .classList.remove("hidden");
+
+
+  document
+    .getElementById("prayerCard")
+    .classList.add("hidden");
+
+
+  document
+    .getElementById("adminCard")
+    .classList.add("hidden");
+
+
+  document
+    .getElementById("familyWelcome")
+    .textContent =
+    "مرحبًا بكم في رفقاء الفجر 🌙";
+
+
+  if(isAdmin){
+
+    document
+      .getElementById("adminButton")
+      .classList
+      .remove("hidden");
+
+  }else{
+
+    document
+      .getElementById("adminButton")
+      .classList
+      .add("hidden");
+
+  }
+
+
+  await loadChildren();
+
+}
+
+
+/* =====================================
+   إضافة ابن
+===================================== */
+
+async function addChild(){
+
+  if(!currentUser){
+
+    alert(
+      "يجب تسجيل الدخول أولًا."
+    );
+
+    return;
+  }
+
+
+  const name =
+    document
+    .getElementById("childName")
+    .value
+    .trim();
+
+
+  if(!name){
+
+    alert(
+      "اكتب اسم الابن أولًا."
+    );
+
+    return;
+  }
+
+
+  const {error} =
+    await supabaseClient
+    .from("children")
+    .insert({
+      family_id:currentUser.id,
+      name:name
+    });
+
+
+  if(error){
+
+    alert(
+      "❌ حدث خطأ: " +
+      error.message
+    );
+
+    return;
+  }
+
+
+  document
+    .getElementById("childName")
+    .value = "";
+
+
+  await loadChildren();
+
+}
+
+
+/* =====================================
+   تحميل الأبناء
+===================================== */
+
+async function loadChildren(){
+
+  if(!currentUser){
+    return;
+  }
+
+
+  const {data,error} =
+    await supabaseClient
+    .from("children")
+    .select("*")
+    .eq("family_id",currentUser.id)
+    .order("created_at");
+
+
+  if(error){
+
+    console.log(error);
+
+    document
+      .getElementById("members")
+      .innerHTML =
+      '<p class="small">❌ تعذر تحميل الأبناء.</p>';
+
+    return;
+  }
+
+
+  const container =
+    document.getElementById("members");
+
+
+  container.innerHTML = "";
+
+
+  if(!data || data.length === 0){
+
+    container.innerHTML =
+      '<p class="small">لم تتم إضافة أي أبناء بعد.</p>';
+
+    return;
+  }
+
+
+  for(const child of data){
+
+    const prayer =
+      await getTodayPrayer(child.id);
+
+
+    let status;
+
+
+    if(prayer){
+
+      status =
+        prayer.fajr
+        ? '<span class="ok">✓ صلّى</span>'
+        : '<span class="pending">لم يصلِّ</span>';
+
+    }else{
+
+      status =
+        '<span class="pending">لم يسجل</span>';
+
+    }
+
+
+    const div =
+      document.createElement("div");
+
+
+    div.className =
+      "member";
+
+
+    div.innerHTML = `
+      <span>
+        👦 ${escapeHtml(child.name)}
+      </span>
+      ${status}
+    `;
+
+
+    div.onclick =
+      function(){
+        selectChild(child);
+      };
+
+
+    div.style.cursor =
+      "pointer";
+
+
+    container.appendChild(div);
+
+  }
+
+}
+
+
+/* =====================================
+   اختيار الابن
+===================================== */
+
+function selectChild(child){
+
+  selectedChildId =
+    child.id;
+
+
+  document
+    .getElementById("familyCard")
+    .classList
+    .add("hidden");
+
+
+  document
+    .getElementById("prayerCard")
+    .classList
+    .remove("hidden");
+
+
+  document
+    .getElementById("selectedChild")
+    .textContent =
+    "متابعة: " + child.name;
+
+
+  loadTodayPrayer();
+
+}
+
+
+/* =====================================
+   تسجيل الصلاة
+===================================== */
+
+async function savePrayer(value){
+
+  if(!selectedChildId){
+    return;
+  }
+
+
+  const existing =
+    await getTodayPrayer(
+      selectedChildId
+    );
+
+
+  let error;
+
+
+  if(existing){
+
+    const result =
+      await supabaseClient
+      .from("prayers")
+      .update({
+        fajr:value
+      })
+      .eq("id",existing.id);
+
+
+    error =
+      result.error;
+
+  }else{
+
+    const result =
+      await supabaseClient
+      .from("prayers")
+      .insert({
+        child_id:selectedChildId,
+        prayer_date:today,
+        fajr:value
+      });
+
+
+    error =
+      result.error;
+
+  }
+
+
+  if(error){
+
+    document
+      .getElementById("prayerStatus")
+      .textContent =
+      "❌ حدث خطأ: " +
+      error.message;
+
+    return;
+  }
+
+
+  document
+    .getElementById("prayerStatus")
+    .textContent =
+    value
+    ? "✅ تم تسجيل: صليت الحمد لله. بارك الله فيك!"
+    : "تم تسجيل إجابتك. نسأل الله أن يعيننا جميعًا.";
+
+}
+
+
+/* =====================================
+   جلب صلاة اليوم
+===================================== */
+
+async function getTodayPrayer(childId){
+
+  const {data,error} =
+    await supabaseClient
+    .from("prayers")
+    .select("*")
+    .eq("child_id",childId)
+    .eq("prayer_date",today)
+    .maybeSingle();
+
+
+  if(error){
+
+    console.log(error);
+
+    return null;
+  }
+
+
+  return data;
+
+}
+
+
+/* =====================================
+   عرض صلاة اليوم
+===================================== */
+
+async function loadTodayPrayer(){
+
+  const prayer =
+    await getTodayPrayer(
+      selectedChildId
+    );
+
+
+  const status =
+    document
+    .getElementById("prayerStatus");
+
+
+  if(prayer){
+
+    status.textContent =
+      prayer.fajr
+      ? "✅ تم تسجيل: صليت الحمد لله."
+      : "تم تسجيل أنك لم تصلِّ الفجر.";
+
+  }else{
+
+    status.textContent =
+      "لم تسجل إجابتك بعد.";
+
+  }
+
+}
+
+
+/* =====================================
+   لوحة الإدارة
+===================================== */
+
+async function showAdmin(){
+
+  if(!isAdmin){
+
+    alert(
+      "ليس لديك صلاحية الإدارة."
+    );
+
+    return;
+  }
+
+
+  document
+    .getElementById("familyCard")
+    .classList
+    .add("hidden");
+
+
+  document
+    .getElementById("prayerCard")
+    .classList
+    .add("hidden");
+
+
+  document
+    .getElementById("adminCard")
+    .classList
+    .remove("hidden");
+
+
+  await loadAdminStats();
+
+}
+
+
+/* =====================================
+   إحصائيات الإدارة
+===================================== */
+
+async function loadAdminStats(){
+
+  /*
+    ملاحظة:
+    بسبب RLS الحالي، حساب Admin يستطيع
+    رؤية سجل admin_users الخاص به فقط،
+    لكنه لا يستطيع بعد رؤية كل العائلات.
+    
+    لذلك سنعرض في هذه المرحلة معلومات
+    الحساب الحالي، وبعدها نضيف صلاحيات
+    الإدارة الشاملة بطريقة آمنة.
+  */
+
+
+  document
+    .getElementById("adminFamilies")
+    .textContent =
+    "—";
+
+
+  document
+    .getElementById("adminChildren")
+    .textContent =
+    "—";
+
+
+  document
+    .getElementById("adminPrayers")
+    .textContent =
+    "—";
+
+
+  document
+    .getElementById("adminFamiliesList")
+    .innerHTML = `
+      <div class="familyAdmin">
+        👑 حساب المدير مفعل بنجاح.
+        <br><br>
+        <span class="small">
+          صلاحية الإدارة تعمل، لكن الوصول إلى
+          بيانات جميع العائلات سنضيفه في الخطوة التالية
+          باستخدام صلاحيات قاعدة البيانات.
+        </span>
+      </div>
+    `;
+
+}
+
+
+/* =====================================
+   الرجوع من لوحة الإدارة
+===================================== */
+
+function backFromAdmin(){
+
+  document
+    .getElementById("adminCard")
+    .classList
+    .add("hidden");
+
+
+  document
+    .getElementById("familyCard")
+    .classList
+    .remove("hidden");
+
+
+  loadChildren();
+
+}
+
+
+/* =====================================
+   الرجوع للعائلة
+===================================== */
+
+function backToFamily(){
+
+  document
+    .getElementById("prayerCard")
+    .classList
+    .add("hidden");
+
+
+  document
+    .getElementById("familyCard")
+    .classList
+    .remove("hidden");
+
+
+  loadChildren();
+
+}
+
+
+/* =====================================
+   تسجيل الخروج
+===================================== */
+
+async function signOut(){
+
+  await supabaseClient
+    .auth
+    .signOut();
+
+
+  currentUser = null;
+  selectedChildId = null;
+  isAdmin = false;
+
+
+  document
+    .getElementById("familyCard")
+    .classList
+    .add("hidden");
+
+
+  document
+    .getElementById("prayerCard")
+    .classList
+    .add("hidden");
+
+
+  document
+    .getElementById("adminCard")
+    .classList
+    .add("hidden");
+
+
+  document
+    .getElementById("authCard")
+    .classList
+    .remove("hidden");
+
+
+  showAuth(
+    "تم تسجيل الخروج."
+  );
+
+}
+
+
+/* =====================================
+   رسائل الدخول
+===================================== */
+
+function showAuth(message){
+
+  document
+    .getElementById("authStatus")
+    .textContent =
+    message;
+
+}
+
+
+/* =====================================
+   حماية النص
+===================================== */
+
+function escapeHtml(text){
+
+  const div =
+    document.createElement("div");
+
+  div.textContent =
+    text;
+
+  return div.innerHTML;
+
+}
+
+
+/* =====================================
+   استرجاع الجلسة
+===================================== */
+
+async function checkSession(){
+
+  const {data} =
+    await supabaseClient
+    .auth
+    .getSession();
+
+
+  if(data.session){
+
+    currentUser =
+      data.session.user;
 
 
     await ensureFamily();
+
+    await checkAdmin();
 
     showFamily();
 
   }
 
-
-  /* =====================================
-     التأكد من وجود العائلة
-  ===================================== */
-
-  async function ensureFamily(){
-
-    if(!currentUser){
-
-      return;
-    }
+}
 
 
-    const {data,error} =
-      await supabaseClient
-      .from("families")
-      .select("id")
-      .eq("id",currentUser.id)
-      .maybeSingle();
+/* =====================================
+   مراقبة تسجيل الدخول
+===================================== */
 
+supabaseClient.auth
+  .onAuthStateChange(
+    async (event, session) => {
 
-    if(error){
+      if(session){
 
-      console.log(
-        "Family check error:",
-        error
-      );
+        currentUser =
+          session.user;
 
-      return;
-    }
-
-
-    if(!data){
-
-      const {error:insertError} =
-        await supabaseClient
-        .from("families")
-        .insert({
-          id:currentUser.id,
-          family_name:"عائلتي"
-        });
-
-
-      if(insertError){
-
-        console.log(
-          "Family creation error:",
-          insertError
-        );
+        await checkAdmin();
 
       }
 
     }
+  );
 
-  }
 
+/* تشغيل الموقع */
 
-  /* =====================================
-     إظهار العائلة
-  ===================================== */
-
-  async function showFamily(){
-
-    document
-      .getElementById("authCard")
-      .classList.add("hidden");
-
-
-    document
-      .getElementById("familyCard")
-      .classList.remove("hidden");
-
-
-    document
-      .getElementById("prayerCard")
-      .classList.add("hidden");
-
-
-    document
-      .getElementById("familyWelcome")
-      .textContent =
-      "مرحبًا بكم في رفقاء الفجر 🌙";
-
-
-    await loadChildren();
-
-  }
-
-
-  /* =====================================
-     إضافة ابن
-  ===================================== */
-
-  async function addChild(){
-
-    if(!currentUser){
-
-      alert(
-        "يجب تسجيل الدخول أولًا."
-      );
-
-      return;
-    }
-
-
-    const name =
-      document
-      .getElementById("childName")
-      .value.trim();
-
-
-    if(!name){
-
-      alert(
-        "اكتب اسم الابن أولًا."
-      );
-
-      return;
-    }
-
-
-    const {error} =
-      await supabaseClient
-      .from("children")
-      .insert({
-        family_id:currentUser.id,
-        name:name
-      });
-
-
-    if(error){
-
-      alert(
-        "❌ حدث خطأ: " +
-        error.message
-      );
-
-      return;
-    }
-
-
-    document
-      .getElementById("childName")
-      .value = "";
-
-
-    await loadChildren();
-
-  }
-
-
-  /* =====================================
-     تحميل الأبناء
-  ===================================== */
-
-  async function loadChildren(){
-
-    if(!currentUser){
-
-      return;
-    }
-
-
-    const {data,error} =
-      await supabaseClient
-      .from("children")
-      .select("*")
-      .eq("family_id",currentUser.id)
-      .order("created_at");
-
-
-    if(error){
-
-      console.log(error);
-
-      document
-        .getElementById("members")
-        .innerHTML =
-        '<p class="small">❌ تعذر تحميل الأبناء.</p>';
-
-      return;
-    }
-
-
-    const container =
-      document.getElementById("members");
-
-
-    container.innerHTML = "";
-
-
-    if(!data || data.length === 0){
-
-      container.innerHTML =
-        '<p class="small">لم تتم إضافة أي أبناء بعد.</p>';
-
-      return;
-    }
-
-
-    for(const child of data){
-
-      const prayer =
-        await getTodayPrayer(
-          child.id
-        );
-
-
-      let status;
-
-
-      if(prayer){
-
-        status =
-          prayer.fajr
-          ? '<span class="ok">✓ صلّى</span>'
-          : '<span class="pending">لم يصلِّ</span>';
-
-      }else{
-
-        status =
-          '<span class="pending">لم يسجل</span>';
-
-      }
-
-
-      const div =
-        document.createElement("div");
-
-
-      div.className = "member";
-
-
-      div.innerHTML = `
-        <span>
-          👦 ${escapeHtml(child.name)}
-        </span>
-        ${status}
-      `;
-
-
-      div.onclick = function(){
-
-        selectChild(child);
-
-      };
-
-
-      div.style.cursor = "pointer";
-
-
-      container.appendChild(div);
-
-    }
-
-  }
-
-
-  /* =====================================
-     اختيار الابن
-  ===================================== */
-
-  function selectChild(child){
-
-    selectedChildId =
-      child.id;
-
-
-    document
-      .getElementById("familyCard")
-      .classList.add("hidden");
-
-
-    document
-      .getElementById("prayerCard")
-      .classList.remove("hidden");
-
-
-    document
-      .getElementById("selectedChild")
-      .textContent =
-      "متابعة: " + child.name;
-
-
-    loadTodayPrayer();
-
-  }
-
-
-  /* =====================================
-     تسجيل الصلاة
-  ===================================== */
-
-  async function savePrayer(value){
-
-    if(!selectedChildId){
-
-      return;
-    }
-
-
-    const existing =
-      await getTodayPrayer(
-        selectedChildId
-      );
-
-
-    let error;
-
-
-    if(existing){
-
-      const result =
-        await supabaseClient
-        .from("prayers")
-        .update({
-          fajr:value
-        })
-        .eq("id",existing.id);
-
-
-      error =
-        result.error;
-
-    }else{
-
-      const result =
-        await supabaseClient
-        .from("prayers")
-        .insert({
-          child_id:selectedChildId,
-          prayer_date:today,
-          fajr:value
-        });
-
-
-      error =
-        result.error;
-
-    }
-
-
-    if(error){
-
-      document
-        .getElementById("prayerStatus")
-        .textContent =
-        "❌ حدث خطأ: " +
-        error.message;
-
-      return;
-    }
-
-
-    document
-      .getElementById("prayerStatus")
-      .textContent =
-      value
-      ? "✅ تم تسجيل: صليت الحمد لله. بارك الله فيك!"
-      : "تم تسجيل إجابتك. نسأل الله أن يعيننا جميعًا.";
-
-  }
-
-
-  /* =====================================
-     جلب صلاة اليوم
-  ===================================== */
-
-  async function getTodayPrayer(childId){
-
-    const {data,error} =
-      await supabaseClient
-      .from("prayers")
-      .select("*")
-      .eq("child_id",childId)
-      .eq("prayer_date",today)
-      .maybeSingle();
-
-
-    if(error){
-
-      console.log(error);
-
-      return null;
-    }
-
-
-    return data;
-
-  }
-
-
-  /* =====================================
-     عرض صلاة اليوم
-  ===================================== */
-
-  async function loadTodayPrayer(){
-
-    const prayer =
-      await getTodayPrayer(
-        selectedChildId
-      );
-
-
-    const status =
-      document
-      .getElementById("prayerStatus");
-
-
-    if(prayer){
-
-      status.textContent =
-        prayer.fajr
-        ? "✅ تم تسجيل: صليت الحمد لله."
-        : "تم تسجيل أنك لم تصلِّ الفجر.";
-
-    }else{
-
-      status.textContent =
-        "لم تسجل إجابتك بعد.";
-
-    }
-
-  }
-
-
-  /* =====================================
-     الرجوع للعائلة
-  ===================================== */
-
-  function backToFamily(){
-
-    document
-      .getElementById("prayerCard")
-      .classList.add("hidden");
-
-
-    document
-      .getElementById("familyCard")
-      .classList.remove("hidden");
-
-
-    loadChildren();
-
-  }
-
-
-  /* =====================================
-     تسجيل الخروج
-  ===================================== */
-
-  async function signOut(){
-
-    await supabaseClient
-      .auth
-      .signOut();
-
-
-    currentUser = null;
-
-    selectedChildId = null;
-
-
-    document
-      .getElementById("familyCard")
-      .classList.add("hidden");
-
-
-    document
-      .getElementById("prayerCard")
-      .classList.add("hidden");
-
-
-    document
-      .getElementById("authCard")
-      .classList.remove("hidden");
-
-
-    showAuth(
-      "تم تسجيل الخروج."
-    );
-
-  }
-
-
-  /* =====================================
-     رسائل الدخول
-  ===================================== */
-
-  function showAuth(message){
-
-    document
-      .getElementById("authStatus")
-      .textContent =
-      message;
-
-  }
-
-
-  /* =====================================
-     حماية النص
-  ===================================== */
-
-  function escapeHtml(text){
-
-    const div =
-      document.createElement("div");
-
-    div.textContent =
-      text;
-
-    return div.innerHTML;
-
-  }
-
-
-  /* =====================================
-     استرجاع الجلسة
-  ===================================== */
-
-  async function checkSession(){
-
-    const {data} =
-      await supabaseClient
-      .auth
-      .getSession();
-
-
-    if(data.session){
-
-      currentUser =
-        data.session.user;
-
-
-      await ensureFamily();
-
-      showFamily();
-
-    }
-
-  }
-
-
-  /* =====================================
-     مراقبة حالة تسجيل الدخول
-  ===================================== */
-
-  supabaseClient.auth
-    .onAuthStateChange(
-      async (event, session) => {
-
-        if(session){
-
-          currentUser =
-            session.user;
-
-        }
-
-      }
-    );
-
-
-  /* تشغيل الموقع */
-  checkSession();
+checkSession();
 
 </script>
 
