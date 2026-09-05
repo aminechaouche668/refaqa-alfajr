@@ -74,6 +74,7 @@ button{cursor:pointer;border:0}
 .personIcon{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;border:1px solid #dcd7ca}
 .ok{color:#168052;font-weight:bold}
 .pending{color:#888}
+.notyet{color:#b0832f;font-weight:bold}
 
 .dua{line-height:2;font-size:18px;background:linear-gradient(135deg,#fffaf0,#f4f8f1);border-radius:17px;padding:16px;border:1px solid #eee6d5}
 .dateBig{display:grid;grid-template-columns:1fr 1fr;gap:10px;text-align:center}
@@ -180,6 +181,20 @@ const adhkar=[
 ["اللهم إني أسألك العفو والعافية في الدنيا والآخرة.","دعاء مأثور"]
 ];
 
+/* =========================
+   UUIDs المعتمدة لأفراد العائلة
+========================= */
+
+const CHILD_IDS={
+ "إدريس":"da1cee4d-b382-4bfc-a7cf-9761fd4e4dec",
+ "إسحاق":"62512511-4934-47aa-ae8d-dfc5bb3b12eb",
+ "حليمة":"acbe688c-7d3e-457e-8701-ba1f365309eb",
+ "عبد المؤمن":"f1190923-003e-464c-9a44-210bcc447efd",
+ "عبد النور":"0e25e524-35c7-4e4b-81f1-da8713b89a1b",
+ "محمد":"f5ff9efb-88fd-4340-84d1-a8d3925d86af",
+ "نوارة":"922ad9ee-ba5b-46a9-8a95-32e6cbe02d64"
+};
+
 function toast(msg){
  const t=document.getElementById("toast");
  t.textContent=msg;
@@ -197,8 +212,14 @@ function esc(s){
  }[m]));
 }
 
+/* =========================
+   التاريخ
+========================= */
+
 function today(){
- return new Date().toLocaleDateString("en-CA",{timeZone:"Africa/Algiers"});
+ return new Intl.DateTimeFormat("en-CA",{
+  timeZone:"Africa/Algiers"
+ }).format(new Date());
 }
 
 function dateParts(){
@@ -233,7 +254,6 @@ function dayKey(d=new Date()){
 function randomDua(){
  return duas[Math.floor(Math.random()*duas.length)];
 }
-
 
 /* =========================
    إشعارات الهاتف
@@ -320,7 +340,6 @@ async function enablePushNotifications(){
   toast("حدث خطأ أثناء تفعيل الإشعارات");
  }
 }
-
 
 /* =========================
    تسجيل الدخول
@@ -499,9 +518,8 @@ async function resetPassword(){
  );
 }
 
-
 /* =========================
-   العائلة والبيانات
+   العائلة
 ========================= */
 
 async function ensureFamily(name="عائلتي"){
@@ -531,9 +549,8 @@ async function ensureFamily(name="عائلتي"){
  family=data;
 }
 
-
 /* =========================
-   تحميل بيانات العائلة الحالية فقط
+   تحميل البيانات
 ========================= */
 
 async function loadData(){
@@ -568,7 +585,7 @@ async function loadData(){
 
  children=c.data||[];
 
- const ids=children.map(x=>x.id);
+ const ids=children.map(x=>String(x.id));
 
  prayers=[];
 
@@ -585,6 +602,7 @@ async function loadData(){
    prayers=p.data||[];
   }else{
    console.error(p.error);
+   toast("تعذر تحميل سجلات الفجر");
   }
  }
 
@@ -594,7 +612,7 @@ async function loadData(){
 
  if(
   currentChild&&
-  !children.some(x=>x.id===currentChild.id)
+  !children.some(x=>String(x.id)===String(currentChild.id))
  ){
   currentChild=children[0]||null;
  }
@@ -619,7 +637,6 @@ async function loadApp(){
 
  renderApp();
 }
-
 
 /* =========================
    الواجهة
@@ -760,6 +777,19 @@ function newDua(){
  toast(randomDua());
 }
 
+/* =========================
+   البحث عن صلاة طفل اليوم
+========================= */
+
+function getTodayPrayer(childId){
+
+ const t=today();
+
+ return prayers.find(p=>
+  String(p.child_id)===String(childId)&&
+  String(p.prayer_date)===String(t)
+ );
+}
 
 /* =========================
    الرئيسية
@@ -768,14 +798,10 @@ function newDua(){
 function homeView(){
 
  const dp=dateParts();
- const t=today();
 
  const todayRows=
   children.map(c=>
-   prayers.find(p=>
-    p.child_id===c.id&&
-    p.prayer_date===t
-   )
+   getTodayPrayer(c.id)
   );
 
  const done=
@@ -857,7 +883,6 @@ function homeView(){
 
  </section>
 
-
  <div class="stats">
 
   <div class="stat">
@@ -890,7 +915,6 @@ function homeView(){
 
  </div>
 
-
  <div class="two" style="margin-top:17px">
 
   <section class="card">
@@ -910,7 +934,6 @@ function homeView(){
    ${memberRows()}
 
   </section>
-
 
   <section class="card">
 
@@ -950,7 +973,6 @@ function homeView(){
 
  </div>
 
-
  <div class="two">
 
   <section class="card">
@@ -977,7 +999,6 @@ function homeView(){
 
   </section>
 
-
   <section class="card">
 
    <div class="sectionTitle">
@@ -1001,7 +1022,6 @@ function homeView(){
   </section>
 
  </div>
-
 
  <section class="card">
 
@@ -1054,7 +1074,6 @@ function homeView(){
 
  </section>
 
-
  <section class="card">
 
   <div class="sectionTitle">
@@ -1074,7 +1093,6 @@ function homeView(){
  </section>`;
 }
 
-
 /* =========================
    حالة كل طفل اليوم
 ========================= */
@@ -1090,17 +1108,12 @@ function memberRows(){
    </div>`;
  }
 
- const t=today();
-
  return children.map(c=>{
 
-  const p=prayers.find(x=>
-   x.child_id===c.id&&
-   x.prayer_date===t
-  );
+  const p=getTodayPrayer(c.id);
 
   let status="◷ لم يسجل بعد";
-  let statusClass="pending";
+  let statusClass="notyet";
 
   if(p){
 
@@ -1147,7 +1160,6 @@ function memberRows(){
  }).join("");
 }
 
-
 /* =========================
    أفراد العائلة
 ========================= */
@@ -1177,7 +1189,7 @@ function familyView(){
     children.map(c=>
      `<button
        class="childBtn ${currentChild?.id===c.id?"active":""}"
-       onclick="selectChild('${c.id}')">
+       onclick="selectChild('${esc(c.id)}')">
 
        👤 ${esc(c.name)}
 
@@ -1193,7 +1205,6 @@ function familyView(){
 
  </section>
 
-
  <section class="card">
 
   <div class="sectionTitle">
@@ -1205,7 +1216,6 @@ function familyView(){
  </section>`;
 }
 
-
 /* =========================
    الإحصائيات
 ========================= */
@@ -1216,7 +1226,7 @@ function statsView(){
 
  const done=
   prayers.filter(p=>
-   p.prayer_date===t&&
+   String(p.prayer_date)===String(t)&&
    p.fajr===true
   ).length;
 
@@ -1230,7 +1240,7 @@ function statsView(){
 
    const all=
     prayers.filter(p=>
-     p.child_id===c.id&&
+     String(p.child_id)===String(c.id)&&
      p.fajr===true
     );
 
@@ -1284,7 +1294,6 @@ function statsView(){
 
  </section>
 
-
  <section class="card">
 
   <div class="sectionTitle">
@@ -1316,7 +1325,6 @@ function statsView(){
 
  </section>`;
 }
-
 
 /* =========================
    الأذكار
@@ -1367,7 +1375,6 @@ function adhkarView(){
 
  </section>`;
 }
-
 
 /* =========================
    الإدارة
@@ -1436,7 +1443,7 @@ async function loadAdminStats(){
 
  const todayDone=
   pr.filter(x=>
-   x.prayer_date===t&&
+   String(x.prayer_date)===String(t)&&
    x.fajr===true
   ).length;
 
@@ -1460,7 +1467,6 @@ async function loadAdminStats(){
   </div>
 
  </div>
-
 
  <div
   class="tableWrap"
@@ -1520,7 +1526,6 @@ async function loadAdminStats(){
  </div>`;
 }
 
-
 function viewContent(){
 
  if(currentView==="family")
@@ -1538,9 +1543,8 @@ function viewContent(){
  return homeView();
 }
 
-
 /* =========================
-   تسجيل الفجر — الإصلاح
+   تسجيل الفجر
 ========================= */
 
 async function saveFajr(val){
@@ -1552,28 +1556,29 @@ async function saveFajr(val){
   return;
  }
 
- const childId=currentChild.id;
+ const childId=String(currentChild.id);
  const prayerDate=today();
 
  try{
 
   /*
-   نبحث عن تسجيل الطفل لهذا اليوم.
-   إذا موجود نحدّثه.
-   إذا غير موجود ننشئه.
+   نبحث عن سجل الطفل نفسه في تاريخ اليوم.
+   لا نعتمد على اسم الطفل.
+   الاعتماد يكون فقط على child_id + prayer_date.
   */
 
   const {data:existing,error:findError}=
    await sb
     .from("prayers")
-    .select("id")
+    .select("id,child_id,prayer_date,fajr")
     .eq("child_id",childId)
     .eq("prayer_date",prayerDate)
+    .limit(1)
     .maybeSingle();
 
   if(findError){
 
-   console.error(findError);
+   console.error("find prayer error:",findError);
 
    toast("تعذر قراءة تسجيل الصلاة");
 
@@ -1588,9 +1593,10 @@ async function saveFajr(val){
     await sb
      .from("prayers")
      .update({
-      fajr:val
+      fajr:Boolean(val)
      })
-     .eq("id",existing.id);
+     .eq("id",existing.id)
+     .eq("child_id",childId);
 
    error=result.error;
 
@@ -1602,7 +1608,7 @@ async function saveFajr(val){
      .insert({
       child_id:childId,
       prayer_date:prayerDate,
-      fajr:val
+      fajr:Boolean(val)
      });
 
    error=result.error;
@@ -1610,7 +1616,7 @@ async function saveFajr(val){
 
   if(error){
 
-   console.error(error);
+   console.error("save prayer error:",error);
 
    toast(
     "تعذر حفظ الإجابة: "+
@@ -1620,15 +1626,12 @@ async function saveFajr(val){
    return;
   }
 
-  /*
-   إعادة تحميل البيانات من Supabase
-   حتى تظهر الحالة الصحيحة مباشرة.
-  */
-
   await loadData();
 
   currentChild=
-   children.find(c=>c.id===childId)||
+   children.find(c=>
+    String(c.id)===childId
+   )||
    children[0]||
    null;
 
@@ -1648,7 +1651,6 @@ async function saveFajr(val){
  }
 }
 
-
 /* =========================
    اختيار الطفل
 ========================= */
@@ -1656,12 +1658,15 @@ async function saveFajr(val){
 function selectChild(id){
 
  currentChild=
-  children.find(c=>c.id===id)||
+  children.find(c=>
+   String(c.id)===String(id)
+  )||
   null;
+
+ currentView="home";
 
  renderApp();
 }
-
 
 /* =========================
    إضافة طفل
@@ -1706,7 +1711,6 @@ async function addChild(){
  }
 }
 
-
 /* =========================
    المتابعة المتتالية
 ========================= */
@@ -1726,8 +1730,8 @@ function streak(){
   const dayRows=
    children.map(c=>
     prayers.find(p=>
-     p.child_id===c.id&&
-     p.prayer_date===ds
+     String(p.child_id)===String(c.id)&&
+     String(p.prayer_date)===String(ds)
     )
    );
 
@@ -1751,7 +1755,6 @@ function streak(){
  return n;
 }
 
-
 /* =========================
    سجل الفجر
 ========================= */
@@ -1772,7 +1775,7 @@ function showPrayerHistory(){
 
    const ps=
     prayers.filter(p=>
-     p.prayer_date===ds&&
+     String(p.prayer_date)===String(ds)&&
      p.fajr===true
     );
 
@@ -1793,7 +1796,7 @@ function showPrayerHistory(){
 
        const c=
         children.find(x=>
-         x.id===p.child_id
+         String(x.id)===String(p.child_id)
         );
 
        return esc(c?.name||"عضو");
@@ -1860,7 +1863,6 @@ function showPrayerHistory(){
   );
 }
 
-
 /* =========================
    خروج
 ========================= */
@@ -1882,12 +1884,15 @@ async function logout(){
  toast("تم تسجيل الخروج");
 }
 
+/* =========================
+   شاشة الدخول
+========================= */
+
 function showAuth(){
 
  document.getElementById("root").innerHTML=
   authScreen();
 }
-
 
 /* =========================
    تشغيل التطبيق
