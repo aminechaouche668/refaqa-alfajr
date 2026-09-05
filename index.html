@@ -1,5 +1,4 @@
 <!doctype html>
-
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
@@ -20,9 +19,12 @@ button,input{font:inherit}button{cursor:pointer;border:0}.hidden{display:none!im
 @media(max-width:600px){.app{padding:9px}.top{position:static;border-radius:16px}.brand{font-size:18px}.nav button{padding:8px}.two,.buttons{grid-template-columns:1fr}.stats{grid-template-columns:1fr 1fr}.features,.duaList{grid-template-columns:1fr}.heroTop{padding:17px}.scene{height:145px}.mosque{left:39%;font-size:50px}.adminGrid{grid-template-columns:1fr}.side{border-radius:19px}.card{padding:15px;border-radius:18px}}
 </style>
 </head>
+
 <body>
 <div id="root"></div>
-<div id="toast" class="toast hidden"></div><script>
+<div id="toast" class="toast hidden"></div>
+
+<script>
 const SUPABASE_URL="https://qrzucdjlbxltfggnixxx.supabase.co";
 const SUPABASE_KEY="sb_publishable_6XjDuCkc99tvwYvxXd0c4g_PYQy43wb";
 const sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
@@ -90,7 +92,7 @@ function urlBase64ToUint8Array(base64String){
  const padding="=".repeat((4-base64String.length%4)%4);
  const base64=(base64String+padding).replace(/-/g,"+").replace(/_/g,"/");
  const rawData=atob(base64);
- return Uint8Array.from([...rawData].map(c=>c.charCodeAt(0)));
+ return Uint8Array.from([...rawData].map(c=>c.charCodeAt(0)))
 }
 
 async function enablePushNotifications(){
@@ -256,12 +258,30 @@ async function ensureFamily(name="عائلتي"){
  family=data;
 }
 
+/* =========================
+   🔒 تحميل بيانات العائلة الحالية فقط
+========================= */
+
 async function loadData(){
- const c=await sb.from("children").select("*").order("created_at",{ascending:true});
+
+ if(!user){
+  children=[];
+  prayers=[];
+  currentChild=null;
+  return;
+ }
+
+ const c=await sb.from("children")
+  .select("*")
+  .eq("family_id",user.id)
+  .order("created_at",{ascending:true});
 
  if(c.error){
   toast("تعذر تحميل أفراد العائلة");
-  return
+  children=[];
+  prayers=[];
+  currentChild=null;
+  return;
  }
 
  children=c.data||[];
@@ -277,13 +297,17 @@ async function loadData(){
    .order("prayer_date",{ascending:false})
    .limit(500);
 
-  if(!p.error)prayers=p.data||[]
+  if(!p.error){
+   prayers=p.data||[];
+  }
  }
 
- if(children.length&&!currentChild)currentChild=children[0];
+ if(children.length&&!currentChild){
+  currentChild=children[0];
+ }
 
  if(currentChild&&!children.some(x=>x.id===currentChild.id)){
-  currentChild=children[0]||null
+  currentChild=children[0]||null;
  }
 }
 
@@ -566,7 +590,7 @@ function memberRows(){
    </div>
 
    ${p?
-    `<span class="ok">✓ صليت</span>`:
+    `<span class="ok">✓ ${p.fajr?"صليت":"لم يصلِّ"}</span>`:
     `<span class="pending">◷ لم يسجل بعد</span>`}
   </div>`
  }).join("");
@@ -958,6 +982,8 @@ async function logout(){
  family=null;
  children=[];
  prayers=[];
+ currentChild=null;
+ isAdmin=false;
 
  document.getElementById("root").innerHTML=authScreen();
 
@@ -994,5 +1020,6 @@ async function init(){
 }
 
 init();
-</script></body>
+</script>
+</body>
 </html>
